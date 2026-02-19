@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+*.pyc
+data/ddragon/raw/
+data/ddragon/icons/
+data/fandom_api/raw/
