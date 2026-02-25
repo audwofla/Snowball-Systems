@@ -21,6 +21,8 @@ def parse_ddragon_basic_json(patch):
             "id": champ_id,
             "key": champ["id"],
             "name": champ["name"],
+            "tags": champ.get("tags", [])
+
         }
 
     return champions

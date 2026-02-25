@@ -17,11 +17,11 @@ def merge_champion_data(
         aram_mods = lua_info.get("aram", {}) if lua_info else {}
 
         spell_changes = fandom_aram_modifiers.get(name, {})
-
         entry = {
             "id": champ_id,
             "key": ddragon_info["key"],
             "name": name,
+            "tags": ddragon_info.get("tags", [])
         }
 
         if aram_mods:
