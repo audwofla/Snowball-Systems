@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from src.config.paths import DATA_DIR
 
 load_dotenv()
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = os.environ["DATABASE_URL"]
 
 with open(DATA_DIR / "aram_seeds.json") as f:
     seeds = json.load(f)
@@ -18,13 +18,14 @@ cur = conn.cursor()
 for puuid in puuids:
     cur.execute(
         """
-        INSERT INTO accounts (puuid)
-        VALUES (%s)
-        ON CONFLICT (puuid) DO NOTHING
+        INSERT INTO accounts (puuid, status, depth)
+        VALUES (%s, 'active', 0)
+        ON CONFLICT (puuid) DO UPDATE
+        SET status = 'active',
+            depth = 0;
         """,
         (puuid,),
     )
-
 conn.commit()
 cur.close()
 conn.close()

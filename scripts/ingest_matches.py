@@ -91,8 +91,8 @@ def main(batch_size: int = 10):
                         for p in participants:
                             cur.execute(
                                 """
-                                INSERT INTO accounts(puuid)
-                                VALUES (%s)
+                                INSERT INTO accounts(puuid, status, depth)
+                                VALUES (%s, 'inactive', 1)
                                 ON CONFLICT (puuid) DO NOTHING;
                                 """,
                                 (p["puuid"],),

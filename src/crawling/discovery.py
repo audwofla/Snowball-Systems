@@ -14,7 +14,7 @@ def _get_with_backoff(url, headers, params: dict | None = None, timeout: int = 2
 
     if r.status_code == 429:
         retry_after = int(r.headers.get("Retry-After", "2"))
-        time.sleep(max(retry_after, 1))
+        time.sleep(max(retry_after + 1, 1))
         raise RiotRateLimit("429 Rate limited")
 
     r.raise_for_status()
@@ -66,7 +66,7 @@ def discover_for_active_accounts(
     *,
     region: str,
     api_key: str,
-    per_account_count: int = 100,
+    per_account_count: int = 50,
     limit_accounts: int | None = 5,
     sleep_seconds: float = 0.10,
 ) -> None:

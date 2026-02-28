@@ -15,7 +15,7 @@ def main():
             conn,
             region="americas",
             api_key=API_KEY,
-            per_account_count=100,
+            per_account_count=50,
             limit_accounts=25,   
             sleep_seconds=0.10,
         )
