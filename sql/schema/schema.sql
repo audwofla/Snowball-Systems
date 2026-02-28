@@ -14,9 +14,8 @@ CREATE TABLE accounts (
   puuid        TEXT PRIMARY KEY,
   status       TEXT NOT NULL DEFAULT 'active', 
   depth        INT  NOT NULL DEFAULT 0,        
-  last_crawled TIMESTAMPTZ,
-  tier         TEXT,
-  rank         TEXT
+  last_crawled TIMESTAMPTZ
+
 );
 
 CREATE TABLE matches (
