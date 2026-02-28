@@ -4,6 +4,7 @@ import ast
 from dataclasses import dataclass
 from itertools import combinations
 from typing import Dict, List, Tuple
+from collections import Counter
 
 import numpy as np
 import pandas as pd
@@ -54,7 +55,6 @@ def load_team_csv(path: str) -> pd.DataFrame:
     df["champs"] = df["champs"].apply(_parse_champs)
     df["tag_counts"] = df["tag_counts"].apply(_parse_tag_counts)
 
-    # win might be bool, or "True"/"False" strings
     if df["win"].dtype == object:
         df["win"] = df["win"].map({"True": 1, "False": 0, True: 1, False: 0})
     df["win"] = df["win"].astype(int)
@@ -62,7 +62,7 @@ def load_team_csv(path: str) -> pd.DataFrame:
     return df
 
 
-def build_vocab(df: pd.DataFrame) -> Vocab:
+def build_vocab(df: pd.DataFrame, min_pair_freq: int = 20) -> Vocab:
 
     all_champs = sorted({c for row in df["champs"] for c in row})
     champ2idx = {c: i for i, c in enumerate(all_champs)}
@@ -70,14 +70,28 @@ def build_vocab(df: pd.DataFrame) -> Vocab:
     all_tags = sorted({t for row in df["tag_counts"] for t in row.keys()})
     tag2idx = {t: i for i, t in enumerate(all_tags)}
 
-    all_pairs = set()
+    pair_counter = Counter()
+
     for champs in df["champs"]:
         champs_sorted = sorted(champs)
         for a, b in combinations(champs_sorted, 2):
-            all_pairs.add((a, b))
-    pair2idx = {p: i for i, p in enumerate(sorted(all_pairs))}
+            pair_counter[(a, b)] += 1
 
-    return Vocab(champ2idx=champ2idx, tag2idx=tag2idx, pair2idx=pair2idx)
+    frequent_pairs = [
+        pair for pair, count in pair_counter.items()
+        if count >= min_pair_freq
+    ]
+
+    pair2idx = {p: i for i, p in enumerate(sorted(frequent_pairs))}
+
+    print(f"Total unique pairs: {len(pair_counter)}")
+    print(f"Pairs kept (>= {min_pair_freq}): {len(pair2idx)}")
+
+    return Vocab(
+        champ2idx=champ2idx,
+        tag2idx=tag2idx,
+        pair2idx=pair2idx
+    )
 
 
 def featurize_df(df: pd.DataFrame, vocab: Vocab):

@@ -38,6 +38,9 @@ def main():
     X_test, y_test = featurize_df(test_df, vocab)
 
     model = LogisticRegression(
+        C=0.1,
+        penalty="elasticnet",
+        l1_ratio=0.5,
         max_iter=3000,
         solver="saga",
         n_jobs=-1,
